@@ -16,6 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Send message for pull request opened
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          color: "#48f442"
+          username: "The Bot"
+          message: |
+            🎉 New pull request opened!
+
+            **${{ github.event.pull_request.title }}**
+
+            ${{ github.event.pull_request.body }}
+
+            [Repository](${{
+              github.event.repository.html_url
+            }})
+              
+            [Pull Request](${{
+              github.event.pull_request.html_url
+            }})
+
       - name: Send message for merge to master
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         uses: appleboy/discord-action@master
@@ -25,7 +48,7 @@ jobs:
           color: "#48f442"
           username: "The Bot"
           message: |
-            New stuff
+            🚀 Pull request merged into master!
 
             **${{ github.event.pull_request.title }}**
 
